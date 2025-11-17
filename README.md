@@ -31,6 +31,9 @@ End-to-end workflow for Sentiment analysis on financial data, training two senti
 > **Note** The heavy training checkpoints were removed; only the finalized FinBERT weights/tokenizer remain under `finbert_models/final_model/`.
 
 ---
+## Prerequisites
+- Python 3.10-3.13
+- Poetry (Install via 'pipx install poetry' or 'curl -sSL https://install.python-poetry.org | python3 -'
 
 ## Environment (Poetry)
 
@@ -133,33 +136,3 @@ Features:
 - Qualitatively, FinBERT captures subtle finance phrasing (e.g., “guidance maintained” → neutral/positive) better than the baseline.
 
 ---
-
-## Deployment checklist
-
-1. Ensure only the trimmed artifacts remain (no local venvs, checkpoints, or notebooks with secrets).
-2. Commit `pyproject.toml`, `.gitignore`, trained model folders, scripts, and README.
-3. Push to GitHub:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: financial sentiment dashboard"
-   git remote add origin <YOUR_REPO_URL>
-   git push -u origin main
-   ```
-
----
-
-## Troubleshooting
-
-| Issue | Resolution |
-|-------|------------|
-| `torch._environment PermissionError` | Run commands outside sandbox (already handled in this repo). |
-| FinBERT predictions off | Ensure `finbert_models/final_model/` contains `config.json`, `tokenizer.json`, `model.safetensors`, and `model_metadata.json`. |
-| Optuna runs out of memory | Reduce `max_length` or `batch_size` in `finbert_finetuned.py` `objective()` hyperparameters. |
-
----
-
-## License
-
-Not specified – add your preferred license before publishing.
-
