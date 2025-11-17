@@ -1,8 +1,8 @@
 # Financial Sentiment Dashboard
 
-End-to-end workflow for cleansing Polygon news data, training two sentiment models, and serving predictions through an interactive Streamlit dashboard. The project satisfies the requirements outlined in **Task for AI Developer.pdf**:
+End-to-end workflow for Sentiment analysis on financial data, training two sentiment models, and serving predictions through an interactive Streamlit dashboard. The project satisfies the outlined requirements:
 
-- **Data layer** – cleans and maps Polygon news/insight feed into labelled text.
+- **Data layer** – clean, perform EDA and maps into labelled data.
 - **Model layer** – BERT + XGBoost baseline plus a fine-tuned FinBERT classifier.
 - **Visualization layer** – dashboard with model switcher, single-text analysis, dataset analytics, sentiment distribution, sentiment vs time (percent view & timeline), and downloadable results.
 
@@ -31,6 +31,21 @@ End-to-end workflow for cleansing Polygon news data, training two sentiment mode
 > **Note** The heavy training checkpoints were removed; only the finalized FinBERT weights/tokenizer remain under `finbert_models/final_model/`.
 
 ---
+## Prerequisites
+- Python 3.10-3.13
+- Poetry (Install via 'pipx install poetry' or 'curl -sSL https://install.python-poetry.org | python3 -'
+
+## FinBERT model weights
+
+`finbert_models/final_model/model.safetensors` is ~420 MB and not stored in Git.  
+Before running FinBERT inference or the Streamlit dashboard’s FinBERT option, download the weights and place them in that folder:
+
+1. Download from: repo's finbert_models/final_model/model.safetensors.
+2. Place the file at `finbert_models/final_model/model.safetensors`.
+3. Verify it’s ~420 MB: `ls -lh finbert_models/final_model/model.safetensors`.
+
+> Tip: if you clone via Git LFS, run `git lfs install && git lfs pull` to fetch the weights automatically.
+
 
 ## Environment (Poetry)
 
@@ -44,10 +59,19 @@ poetry self add poetry-plugin-shell
 
 poetry install                          # resolves & installs deps + creates venv
 
+# Install shell plugin
+poetry self add poetry-plugin-shell
+
 # Activate virtualenv
 poetry shell
 
-# (Optional) run commands directly
+
+# Run the streamlit Application 
+poetry run streamlit run streamlit_app.py
+
+
+
+# (Optional) not needed currently - run commands directly
 poetry run python <script.py>
 ```
 
@@ -140,6 +164,7 @@ Features:
   - sentiment timeline (stacked area)
   - **Sentiment vs Time** scatter with ticker & date range filters
   - downloadable CSV of scored rows
+  - Use exmaple tickers like 'AMZN' 'AAPL' to test.
 
 ---
 
@@ -148,36 +173,5 @@ Features:
 - Dataset (13.3k rows) is heavily skewed toward positive news; class weights or stratification are critical.
 - BERT + XGBoost baseline reached ~93% accuracy after Optuna tuning.
 - FinBERT fine-tuning on the same corpus achieved ~98% test accuracy (metadata stored alongside the model).
-- Qualitatively, FinBERT captures subtle finance phrasing (e.g., “guidance maintained” → neutral/positive) better than the baseline.
-
----
-
-## Deployment checklist
-
-1. Ensure only the trimmed artifacts remain (no local venvs, checkpoints, or notebooks with secrets).
-2. Commit `pyproject.toml`, `.gitignore`, trained model folders, scripts, and README.
-3. Push to GitHub:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: financial sentiment dashboard"
-   git remote add origin <YOUR_REPO_URL>
-   git push -u origin main
-   ```
-
----
-
-## Troubleshooting
-
-| Issue | Resolution |
-|-------|------------|
-| `torch._environment PermissionError` | Run commands outside sandbox (already handled in this repo). |
-| FinBERT predictions off | Ensure `finbert_models/final_model/` contains `config.json`, `tokenizer.json`, `model.safetensors`, and `model_metadata.json`. |
-| Optuna runs out of memory | Reduce `max_length` or `batch_size` in `finbert_finetuned.py` `objective()` hyperparameters. |
-
----
-
-## License
-
-Not specified – add your preferred license before publishing.
+- Qualitatively, FinBERT captures subtle finance phrasing (e.g., “guidance maintained” → neutral/positive) better than the baseline and might need more data for better differencing.
 
