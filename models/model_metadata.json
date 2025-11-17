@@ -1,0 +1,35 @@
+{
+  "model_type": "XGBoost",
+  "bert_model": "bert-base-uncased",
+  "max_length": 128,
+  "baseline_accuracy": 0.9238237490664675,
+  "final_accuracy": 0.9339058999253174,
+  "improvement": 0.010082150858849892,
+  "improvement_percent": 1.0913500404203724,
+  "best_params": {
+    "max_depth": 4.0,
+    "learning_rate": 0.14471712168141912,
+    "n_estimators": 386.0,
+    "min_child_weight": 3.0,
+    "gamma": 0.23275858684681403,
+    "subsample": 0.8396820039662005,
+    "colsample_bytree": 0.9109873732899685,
+    "reg_alpha": 0.35417416060586704,
+    "reg_lambda": 0.3846233838846726,
+    "objective": "multi:softprob",
+    "num_class": 3.0,
+    "eval_metric": "mlogloss",
+    "random_state": 42.0,
+    "n_jobs": -1.0,
+    "tree_method": "hist"
+  },
+  "label_mapping": {
+    "0": "positive",
+    "1": "negative",
+    "2": "neutral"
+  },
+  "training_date": "2025-11-15T22:35:02.347121",
+  "train_samples": 10708,
+  "test_samples": 2678,
+  "feature_dim": 768
+}

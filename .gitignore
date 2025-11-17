@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.DS_Store
+
+# Virtual environments
+.venv/
+venv/
+env/
+*env*/
+
+# Local datasets / outputs
+*.log
+*.tmp
+
+# Large training artifacts
+finbert_models/final_model/checkpoint-*/
+finbert_models/**/*.pt
+finbert_models/**/*.bin
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+

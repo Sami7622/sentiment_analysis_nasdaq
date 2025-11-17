@@ -1,0 +1,26 @@
+{
+  "model_name": "yiyanghkust/finbert-tone",
+  "model_type": "FinBERT",
+  "task": "sentiment_classification",
+  "num_labels": 3,
+  "label_mapping": {
+    "0": "positive",
+    "1": "negative",
+    "2": "neutral"
+  },
+  "best_hyperparameters": {
+    "learning_rate": 1.0308139592563334e-05,
+    "batch_size": 16.0,
+    "weight_decay": 0.2237015172724854,
+    "warmup_steps": 417.0,
+    "max_length": 512.0
+  },
+  "test_accuracy": 0.9809559372666169,
+  "test_f1": 0.980915969556629,
+  "training_date": "2025-11-17T07:07:56.760377",
+  "num_epochs": 50,
+  "train_samples": 8566,
+  "val_samples": 2142,
+  "test_samples": 2678,
+  "max_length": 512
+}
