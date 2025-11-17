@@ -1,8 +1,8 @@
 # Financial Sentiment Dashboard
 
-End-to-end workflow for cleansing Polygon news data, training two sentiment models, and serving predictions through an interactive Streamlit dashboard. The project satisfies the requirements outlined in **Task for AI Developer.pdf**:
+End-to-end workflow for Sentiment analysis on financial data, training two sentiment models, and serving predictions through an interactive Streamlit dashboard. The project satisfies the outlined requirements:
 
-- **Data layer** – cleans and maps Polygon news/insight feed into labelled text.
+- **Data layer** – clean, perform EDA and maps into labelled data.
 - **Model layer** – BERT + XGBoost baseline plus a fine-tuned FinBERT classifier.
 - **Visualization layer** – dashboard with model switcher, single-text analysis, dataset analytics, sentiment distribution, sentiment vs time (percent view & timeline), and downloadable results.
 
