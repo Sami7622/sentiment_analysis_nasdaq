@@ -36,7 +36,13 @@ End-to-end workflow for cleansing Polygon news data, training two sentiment mode
 
 ```bash
 # Install dependencies
-poetry install
+# Install Poetry once (if not already)
+pipx install poetry                     # or: curl -sSL https://install.python-poetry.org | python3 -
+
+# Optional: enable `poetry shell`
+poetry self add poetry-plugin-shell
+
+poetry install                          # resolves & installs deps + creates venv
 
 # Activate virtualenv
 poetry shell
@@ -86,6 +92,18 @@ poetry run python finbert_finetuned.py
 - Optuna hyperparameter optimization (learning rate, batch size, max length, etc.)
 - 50-epoch final training with early stopping (patience=5)
 - saves tokenizer/config/metadata and `model.safetensors` to `finbert_models/final_model/`
+
+---
+
+## FinBERT weights
+
+The fine-tuned weights are large (~420 MB) and not committed to Git.
+
+1. Obtain `model.safetensors` from the training machine (or your preferred storage).  
+2. Place it at `finbert_models/final_model/model.safetensors`.  
+3. Verify the size: `ls -lh finbert_models/final_model/model.safetensors`.
+
+> Tip: if you prefer to keep weights in the repo, add Git LFS tracking (`git lfs track "finbert_models/final_model/*.safetensors"`), then push via LFS.
 
 ---
 

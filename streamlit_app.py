@@ -445,28 +445,66 @@ def main():
         df = load_dataset()
         
         if df is not None:
-            col1, col2 = st.columns(2)
+            df['datetime'] = pd.to_datetime(df['datetime'])
+            min_date = df['datetime'].min().date()
+            max_date = df['datetime'].max().date()
             
-            with col1:
+            filter_col1, filter_col2, filter_col3 = st.columns([2, 1.5, 1.5])
+            
+            with filter_col1:
                 ticker_filter = st.selectbox(
-                    "Filter by Ticker (Optional):",
+                    "Filter by Ticker:",
                     options=['All'] + sorted(df['ticker'].unique().tolist()),
-                    help="Filter analysis by specific financial instrument"
+                    help="Select a specific instrument or keep 'All'"
                 )
             
-            with col2:
-                st.write("")  # Spacing
-                analyze_button = st.button("🚀 Analyze Dataset", type="primary")
+            with filter_col2:
+                start_date = st.date_input(
+                    "Start date:",
+                    value=min_date,
+                    min_value=min_date,
+                    max_value=max_date,
+                    key="dataset_start"
+                )
             
-            if analyze_button:
+            with filter_col3:
+                end_date = st.date_input(
+                    "End date:",
+                    value=max_date,
+                    min_value=min_date,
+                    max_value=max_date,
+                    key="dataset_end"
+                )
+            
+            analyze_button = st.button("🚀 Analyze Dataset", type="primary")
+            
+            if start_date > end_date:
+                st.warning("Start date must be earlier than end date.")
+            elif analyze_button:
+                df_filtered = df.copy()
                 # Filter by ticker if selected
                 if ticker_filter != 'All':
-                    df = df[df['ticker'] == ticker_filter]
-                    st.info(f"Analyzing {len(df)} samples for ticker: {ticker_filter}")
+                    df_filtered = df_filtered[df_filtered['ticker'] == ticker_filter]
+                
+                mask = (
+                    (df_filtered['datetime'].dt.date >= start_date) &
+                    (df_filtered['datetime'].dt.date <= end_date)
+                )
+                df_filtered = df_filtered.loc[mask]
+                
+                if df_filtered.empty:
+                    st.warning("No records found for the selected ticker/date range.")
+                    return
+                
+                st.info(
+                    f"Analyzing {len(df_filtered)} samples "
+                    f"{'for ' + ticker_filter if ticker_filter != 'All' else 'across all tickers'} "
+                    f"from {start_date} to {end_date}."
+                )
                 
                 # Analyze dataset
                 with st.spinner(f"Analyzing dataset with {model_name} model..."):
-                    predictions_df = analyze_dataset(df, predictor)
+                    predictions_df = analyze_dataset(df_filtered, predictor)
                 
                 if predictions_df is not None and len(predictions_df) > 0:
                     st.session_state.predictions_df = predictions_df
@@ -513,84 +551,39 @@ def main():
                     
                     # Sentiment over time
                     st.subheader("📅 Sentiment Over Time")
-                    
-                    # Ticker selection for time series
-                    available_tickers = sorted(predictions_df['ticker'].unique().tolist())
-                    if len(available_tickers) > 1:
-                        selected_ticker = st.selectbox(
-                            "Select Ticker for Time Series:",
-                            options=['All'] + available_tickers,
-                            key="time_series_ticker"
-                        )
-                    else:
-                        selected_ticker = available_tickers[0] if available_tickers else 'All'
-                    
-                    if selected_ticker == 'All':
+                    if ticker_filter == 'All':
                         st.plotly_chart(
                             create_sentiment_over_time_chart(predictions_df),
                             width='stretch'
                         )
                     else:
                         st.plotly_chart(
-                            create_sentiment_over_time_chart(predictions_df, ticker=selected_ticker),
+                            create_sentiment_over_time_chart(predictions_df, ticker=ticker_filter),
                             width='stretch'
                         )
                     
                     # Timeline chart
                     st.subheader("⏱️ Sentiment Timeline")
-                    if selected_ticker == 'All':
+                    if ticker_filter == 'All':
                         st.plotly_chart(
                             create_sentiment_timeline_chart(predictions_df),
                             width='stretch'
                         )
                     else:
                         st.plotly_chart(
-                            create_sentiment_timeline_chart(predictions_df, ticker=selected_ticker),
+                            create_sentiment_timeline_chart(predictions_df, ticker=ticker_filter),
                             width='stretch'
                         )
                     
-                    # Sentiment vs Time (filterable scatter by date range and ticker)
+                    # Sentiment vs Time using current filters
                     st.markdown("---")
-                    st.subheader("🎯 Sentiment vs Time (Filterable)")
-                    
-                    # Compute date bounds from predictions
-                    min_date = pd.to_datetime(predictions_df['datetime']).min().date()
-                    max_date = pd.to_datetime(predictions_df['datetime']).max().date()
-                    
-                    c1, c2, c3 = st.columns([2, 2, 2])
-                    with c1:
-                        svt_ticker = st.selectbox(
-                            "Select Ticker:",
-                            options=['All'] + sorted(predictions_df['ticker'].unique().tolist()),
-                            index=0,
-                            key="svt_ticker"
-                        )
-                    with c2:
-                        svt_start = st.date_input(
-                            "From date:",
-                            value=min_date,
-                            min_value=min_date,
-                            max_value=max_date,
-                            key="svt_start"
-                        )
-                    with c3:
-                        svt_end = st.date_input(
-                            "To date:",
-                            value=max_date,
-                            min_value=min_date,
-                            max_value=max_date,
-                            key="svt_end"
-                        )
-                    
-                    if svt_start > svt_end:
-                        st.warning("Start date is after end date. Please adjust the range.")
-                    else:
-                        st.plotly_chart(
-                            create_sentiment_vs_time_points(
-                                predictions_df, svt_ticker, svt_start, svt_end
-                            ),
-                            width='stretch'
-                        )
+                    st.subheader("🎯 Sentiment vs Time (Selected Filters)")
+                    st.plotly_chart(
+                        create_sentiment_vs_time_points(
+                            predictions_df, ticker_filter, start_date, end_date
+                        ),
+                        width='stretch'
+                    )
                     
                     # Data table
                     st.markdown("---")
