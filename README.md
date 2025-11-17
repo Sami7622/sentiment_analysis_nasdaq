@@ -35,16 +35,37 @@ End-to-end workflow for Sentiment analysis on financial data, training two senti
 - Python 3.10-3.13
 - Poetry (Install via 'pipx install poetry' or 'curl -sSL https://install.python-poetry.org | python3 -'
 
+## FinBERT model weights
+
+`finbert_models/final_model/model.safetensors` is ~420 MB and not stored in Git.  
+Before running FinBERT inference or the Streamlit dashboard’s FinBERT option, download the weights and place them in that folder:
+
+1. Download from: repo's finbert_models/final_model/model.safetensors.
+2. Place the file at `finbert_models/final_model/model.safetensors`.
+3. Verify it’s ~420 MB: `ls -lh finbert_models/final_model/model.safetensors`.
+
+> Tip: if you clone via Git LFS, run `git lfs install && git lfs pull` to fetch the weights automatically.
+
+
 ## Environment (Poetry)
 
 ```bash
 # Install dependencies
 poetry install
 
+# Install shell plugin
+poetry self add poetry-plugin-shell
+
 # Activate virtualenv
 poetry shell
 
-# (Optional) run commands directly
+
+# Run the streamlit Application 
+poetry run streamlit run streamlit_app.py
+
+
+
+# (Optional) not needed currently - run commands directly
 poetry run python <script.py>
 ```
 
