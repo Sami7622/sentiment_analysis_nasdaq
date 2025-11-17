@@ -146,6 +146,7 @@ Features:
   - sentiment timeline (stacked area)
   - **Sentiment vs Time** scatter with ticker & date range filters
   - downloadable CSV of scored rows
+  - Use exmaple tickers like 'AMZN' 'AAPL' to test.
 
 ---
 
@@ -154,6 +155,5 @@ Features:
 - Dataset (13.3k rows) is heavily skewed toward positive news; class weights or stratification are critical.
 - BERT + XGBoost baseline reached ~93% accuracy after Optuna tuning.
 - FinBERT fine-tuning on the same corpus achieved ~98% test accuracy (metadata stored alongside the model).
-- Qualitatively, FinBERT captures subtle finance phrasing (e.g., “guidance maintained” → neutral/positive) better than the baseline.
+- Qualitatively, FinBERT captures subtle finance phrasing (e.g., “guidance maintained” → neutral/positive) better than the baseline and might need more data for better differencing.
 
----
